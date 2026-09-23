@@ -1,0 +1,352 @@
+.dashboardContainer {
+  min-height: 100vh;
+  background-color: var(--color-cream, #F7EDE2);
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border, #ebd9cc);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(43, 45, 66, 0.04);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brandIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-teal, #84A59D);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.brandTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-main, #2b2d42);
+  margin: 0;
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userBadge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-cream, #F7EDE2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border, #ebd9cc);
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-teal, #84A59D);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.userName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-main, #2b2d42);
+}
+
+.logoutBtn {
+  background: transparent;
+  border: 1px solid var(--color-coral, #F28482);
+  color: var(--color-coral, #F28482);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+  background: var(--color-coral, #F28482);
+  color: #ffffff;
+}
+
+.mainContent {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 36px 24px;
+}
+
+.actionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.headingArea h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-main, #2b2d42);
+  margin: 0 0 6px 0;
+}
+
+.headingArea p {
+  color: var(--color-text-muted, #6c757d);
+  font-size: 14px;
+  margin: 0;
+}
+
+.actionsRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.joinForm {
+  display: flex;
+  gap: 8px;
+}
+
+.joinInput {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border, #ebd9cc);
+  font-size: 14px;
+  outline: none;
+  background: #ffffff;
+  color: #2b2d42;
+}
+
+.joinInput:focus {
+  border-color: var(--color-teal, #84A59D);
+}
+
+.joinBtn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #ebd9cc);
+  background: #ffffff;
+  color: var(--color-text-main, #2b2d42);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.joinBtn:hover {
+  border-color: var(--color-teal, #84A59D);
+  color: var(--color-teal, #84A59D);
+}
+
+.createBtn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-teal, #84A59D);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.createBtn:hover {
+  background: #6f928a;
+  transform: translateY(-1px);
+}
+
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.projectCard {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--color-border, #ebd9cc);
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.projectCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(43, 45, 66, 0.08);
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.projectTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-main, #2b2d42);
+  margin: 0 0 6px 0;
+}
+
+.projectMeta {
+  font-size: 12px;
+  color: var(--color-text-muted, #6c757d);
+  margin-bottom: 16px;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+}
+
+.langBadge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--color-gold, #F6BD60);
+  color: #4a3800;
+}
+
+.roleBadge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--color-blush, #F5CAC3);
+  color: #632b26;
+}
+
+.cardActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border, #ebd9cc);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.openBtn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--color-teal, #84A59D);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.openBtn:hover {
+  background: #6f928a;
+  color: #ffffff;
+}
+
+.deleteBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-coral, #F28482);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.deleteBtn:hover {
+  text-decoration: underline;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px dashed var(--color-border, #ebd9cc);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalCard {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 460px;
+  width: 100%;
+  padding: 28px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.15);
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-main, #2b2d42);
+  margin-bottom: 20px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1px solid var(--color-border, #ebd9cc);
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: var(--color-text-main, #2b2d42);
+  font-size: 14px;
+  cursor: pointer;
+}
