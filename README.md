@@ -6,7 +6,7 @@ COcolabs is a modern, high-performance pair-programming and technical interviewi
 
 ---
 <img width="1367" height="916" alt="image" src="https://github.com/user-attachments/assets/95461431-b223-4ea0-8409-2c4747ebc9ad" />
-<img width="1367" height="916" alt="image" src="https://github.com/user-attachments/assets/95461431-b223-4ea0-8409-2c4747ebc9ad" />
+<img width="1828" height="842" alt="image" src="https://github.com/user-attachments/assets/d85532ee-b09f-409c-a841-f60b15822494" />
 <img width="1387" height="617" alt="image" src="https://github.com/user-attachments/assets/d00787bd-fa81-49c5-9c5a-93bf31204a38" />
 <img width="1336" height="611" alt="image" src="https://github.com/user-attachments/assets/69aa00ee-27c2-4181-8e89-3a029d98ba1c" />
 <img width="1357" height="636" alt="image" src="https://github.com/user-attachments/assets/4ef04a3c-9334-4295-a6a6-0eb57d2549e2" />
