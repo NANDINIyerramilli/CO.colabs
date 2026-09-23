@@ -2,7 +2,7 @@
 
 > **Real-Time Collaborative Code Editor & Technical Interview Platform**
 
-COcolabs is a modern, high-performance pair-programming and technical interviewing platform where multiple developers can write, review, and execute code simultaneously in real time. It features a Monaco-based IDE, sandboxed multi-language execution (C++, Java, Python 3), custom test input (stdin) console, persistent projects with PostgreSQL, and point-in-time version history.
+COcolabs is a modern, high-performance pair-programming and technical interviewing platform where multiple developers can write, review, and execute code simultaneously in real time. It features a Monaco-based IDE, sandboxed multi-language execution (C++, Java, Python ), custom test input (stdin) console, persistent projects with PostgreSQL, and point-in-time version history.
 
 ---
 <img width="1367" height="916" alt="image" src="https://github.com/user-attachments/assets/95461431-b223-4ea0-8409-2c4747ebc9ad" />
