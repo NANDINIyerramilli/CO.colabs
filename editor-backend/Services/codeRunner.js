@@ -75,8 +75,8 @@ async function runInDocker({ code, input, lang, tempDir, startTime }) {
     python: `sh -c "python3 Main.py < input.txt"`
   };
 
-  const dockerImage = process.env.RUNNER_IMAGE || 'ubuntu:22.04';
-  const dockerCmd = `docker run --rm --network none -m 256m --cpus 1.0 -v "${tempDir}:/sandbox" -w /sandbox ${dockerImage} ${commands[lang]}`;
+  const dockerImage = process.env.RUNNER_IMAGE || 'cocolabs-runner';
+  const dockerCmd = `docker run --rm --network none -m 256m --cpus 1.0 --user 1001:1001 -v "${tempDir}:/sandbox" -w /sandbox ${dockerImage} ${commands[lang]}`;
 
   return new Promise((resolve) => {
     exec(dockerCmd, { timeout: TIMEOUT_MS, maxBuffer: MAX_BUFFER }, (error, stdout, stderr) => {
