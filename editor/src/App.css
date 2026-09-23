@@ -1,0 +1,132 @@
+@import '~antd/dist/antd.css';
+
+/* Global UI Buttons styled with the custom palette */
+.btn_primary,
+.btn_success,
+.btn_danger,
+.btn_outline,
+.btn_gold {
+  height: 32px;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn_primary:active,
+.btn_success:active,
+.btn_danger:active,
+.btn_outline:active,
+.btn_gold:active {
+  transform: translateY(1px);
+}
+
+.btn_primary {
+  background: var(--color-teal, #84A59D);
+  border: 1px solid transparent;
+  color: #ffffff;
+}
+
+.btn_primary:hover {
+  background: var(--color-teal-hover, #72938b);
+  color: #ffffff;
+}
+
+.btn_success {
+  background: var(--color-teal, #84A59D);
+  border: 1px solid transparent;
+  color: #ffffff;
+}
+
+.btn_success:hover {
+  background: #6e9188;
+  color: #ffffff;
+}
+
+.btn_danger {
+  background: var(--color-coral, #F28482);
+  border: 1px solid transparent;
+  color: #ffffff;
+}
+
+.btn_danger:hover {
+  background: var(--color-coral-hover, #e06c6a);
+  color: #ffffff;
+}
+
+.btn_outline {
+  background: #ffffff;
+  border: 1px solid var(--color-border, #ebd9cc);
+  color: var(--color-text-main, #2b2d42);
+}
+
+.btn_outline:hover {
+  border-color: var(--color-teal, #84A59D);
+  color: var(--color-teal, #84A59D);
+  background: var(--color-surface-soft, #fbf6f0);
+}
+
+.btn_gold {
+  background: var(--color-gold, #F6BD60);
+  border: 1px solid transparent;
+  color: #433100;
+  font-weight: 600;
+}
+
+.btn_gold:hover {
+  background: var(--color-gold-hover, #e5ab4f);
+  color: #433100;
+}
+
+/* Dark theme button adaptations */
+:global(.darkTheme) .btn_outline,
+[data-theme="dark"] .btn_outline {
+  background: #20222b;
+  border-color: #343746;
+  color: #e2e4ed;
+}
+
+:global(.darkTheme) .btn_outline:hover,
+[data-theme="dark"] .btn_outline:hover {
+  background: #282a35;
+  border-color: var(--color-teal, #84A59D);
+  color: #ffffff;
+}
+
+/* Presence Cursors in Monaco */
+.cursor-position {
+  background: var(--color-coral, #F28482);
+  width: 2px !important;
+}
+
+.cursor-selection {
+  background: var(--color-blush, #F5CAC3);
+  opacity: 0.45;
+}
+
+.disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+}
+
+/* Ant Design Popover & Select Styling to Match Palette */
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: var(--radius-sm, 6px) !important;
+  border-color: var(--color-border, #ebd9cc) !important;
+}
+
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: var(--color-teal, #84A59D) !important;
+  box-shadow: 0 0 0 2px rgba(132, 165, 157, 0.2) !important;
+}
