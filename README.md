@@ -5,6 +5,14 @@
 COcolabs is a modern, high-performance pair-programming and technical interviewing platform where multiple developers can write, review, and execute code simultaneously in real time. It features a Monaco-based IDE, sandboxed multi-language execution (C++, Java, Python 3), custom test input (stdin) console, persistent projects with PostgreSQL, and point-in-time version history.
 
 ---
+<img width="1357" height="636" alt="image" src="https://github.com/user-attachments/assets/4ef04a3c-9334-4295-a6a6-0eb57d2549e2" />
+<img width="1367" height="916" alt="image" src="https://github.com/user-attachments/assets/95461431-b223-4ea0-8409-2c4747ebc9ad" />
+<img width="1356" height="631" alt="image" src="https://github.com/user-attachments/assets/9af463ae-7c2b-4555-9e86-4c14bd1f736d" />
+<img width="1367" height="916" alt="image" src="https://github.com/user-attachments/assets/95461431-b223-4ea0-8409-2c4747ebc9ad" />
+<img width="1387" height="617" alt="image" src="https://github.com/user-attachments/assets/d00787bd-fa81-49c5-9c5a-93bf31204a38" />
+<img width="1336" height="611" alt="image" src="https://github.com/user-attachments/assets/69aa00ee-27c2-4181-8e89-3a029d98ba1c" />
+<img width="587" height="886" alt="image" src="https://github.com/user-attachments/assets/4aeae66b-8b63-4a58-93f4-22b52aae0443" />
+
 
 ## ⚡ Features
 
@@ -14,15 +22,15 @@ COcolabs is a modern, high-performance pair-programming and technical interviewi
 
 - **Multi-Language Support**:
   - First-class support for **C++**, **Java**, and **Python 3**.
-  - Clean "Hello, World!" starter boilerplates that update dynamically when switching languages.
+  - starter boilerplates that update dynamically when switching languages.
 
 - **Sandboxed Code Execution**:
   - Safe code running with hard resource constraints: 5000ms timeout, memory limit cap, CPU constraints, and isolated environment.
   - Ephemeral container runner with automatic fallback to isolated process sandboxing.
   - Guaranteed post-execution cleanup of all temporary source files and binaries.
 
-- **Interviewer Test Console (stdin / stdout)**:
-  - Dedicated custom input box allowing candidates and interviewers to run code against edge cases, custom arrays, and data structures.
+- ** Test Console (stdin / stdout)**:
+  - Dedicated custom input box that allows to run code against edge cases, custom arrays, and data structures.
   - Execution telemetry displaying duration in milliseconds (`⏱ ms`), status indicators, stdout output, and highlighted stderr diagnostics.
 
 - **Version History Management**:
@@ -145,5 +153,3 @@ CO.colabs/
 
 ---
 
-## 📄 License
-This project is open-source and available under the [ISC License](LICENSE).
