@@ -18,7 +18,7 @@ COcolabs is a modern, high-performance pair-programming and technical interviewi
   - Live cursor selection and presence tracking for active participants.
 
 - **Multi-Language Support**:
-  - First-class support for **C++**, **Java**, and **Python 3**.
+  - support for **C++**, **Java**, and **Python **.
   - starter boilerplates that update dynamically when switching languages.
 
 - **Sandboxed Code Execution**:
