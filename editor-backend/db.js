@@ -152,6 +152,36 @@ async function findUserById(id) {
   return { id: u.id, name: u.name, email: u.email, created_at: u.created_at };
 }
 
+async function upsertUser({ id, name, email }) {
+  const createdAt = new Date().toISOString();
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanName = (name && name.trim()) || cleanEmail.split('@')[0];
+  const cleanId = id || crypto.randomUUID();
+
+  if (!useMemoryFallback && pool) {
+    const res = await pool.query(
+      `INSERT INTO users (id, name, email, password_hash, created_at)
+       VALUES ($1, $2, $3, 'supabase_auth', $4)
+       ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, email = EXCLUDED.email
+       RETURNING id, name, email, created_at`,
+      [cleanId, cleanName, cleanEmail, createdAt]
+    );
+    return res.rows[0];
+  }
+
+  let u = memoryStore.users.find(user => user.id === cleanId || user.email.toLowerCase() === cleanEmail);
+  if (u) {
+    u.id = cleanId;
+    u.name = cleanName;
+    u.email = cleanEmail;
+  } else {
+    u = { id: cleanId, name: cleanName, email: cleanEmail, password_hash: 'supabase_auth', created_at: createdAt };
+    memoryStore.users.push(u);
+  }
+  persistFallbackData();
+  return { id: u.id, name: u.name, email: u.email, created_at: u.created_at };
+}
+
 // Project Helpers
 async function createProject({ id, title, ownerId, language, initialCode }) {
   const projectId = id ? id.trim() : crypto.randomBytes(4).toString('hex');
@@ -491,6 +521,7 @@ function getDefaultCode(lang) {
 module.exports = {
   initDb,
   createUser,
+  upsertUser,
   findUserByEmail,
   findUserById,
   createProject,

@@ -85,7 +85,23 @@ async function runTests() {
   if (codeResult.status === 'success') {
     assert.ok(codeResult.stdout.includes('Echo: Hello Interviewer'), 'Stdout should contain stdin echo');
   }
-  console.log('✔ Test 8 Passed: Sandboxed code runner executed with input/output');
+  // Test 9: Supabase User Upsert Integration
+  const supabaseUserId = `sb_user_${Date.now()}`;
+  const upserted = await db.upsertUser({
+    id: supabaseUserId,
+    name: 'Supabase User',
+    email: `supabase_${Date.now()}@example.com`
+  });
+  assert.strictEqual(upserted.id, supabaseUserId, 'Upserted ID should match Supabase ID');
+  const foundUser = await db.findUserById(supabaseUserId);
+  assert.ok(foundUser, 'User upserted from Supabase must be retrievable');
+  assert.strictEqual(foundUser.name, 'Supabase User');
+  console.log('✔ Test 9 Passed: Supabase user upsert and sync');
+
+  // Test 10: Supabase Service module exports
+  const supabaseService = require('../Services/supabase');
+  assert.strictEqual(typeof supabaseService.isSupabaseConfigured, 'function');
+  console.log('✔ Test 10 Passed: Supabase client service initialized and exported');
 
   console.log('--- ALL BACKEND TESTS PASSED SUCCESSFULLY! ---');
 }

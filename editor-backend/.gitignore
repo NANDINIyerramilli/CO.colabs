@@ -1,2 +1,9 @@
 # dependencies
 /node_modules
+
+# environment variables
+.env
+.env.local
+
+# local database state
+local_dev_db.json

@@ -71,7 +71,10 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (name, email, password) => {
     const res = await axios.post(`${serverURL}/auth/signup`, { name, email, password });
-    const { token: receivedToken, user: receivedUser } = res.data;
+    const { token: receivedToken, user: receivedUser, needsEmailConfirmation, message } = res.data;
+    if (needsEmailConfirmation || !receivedToken) {
+      return { needsEmailConfirmation: true, message: message || 'Please check your email to confirm your account.' };
+    }
     setToken(receivedToken);
     setUser(receivedUser);
     localStorage.setItem('cocolabs_token', receivedToken);
