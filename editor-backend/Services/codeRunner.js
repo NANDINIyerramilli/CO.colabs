@@ -15,7 +15,7 @@ try {
   console.log('[CodeRunner] Docker not available. Using isolated process sandbox fallback.');
 }
 
-const TIMEOUT_MS = 5000;
+const TIMEOUT_MS = 10000;
 const MAX_BUFFER = 1024 * 1024; // 1MB
 
 /**
@@ -71,7 +71,7 @@ async function runInDocker({ code, input, lang, tempDir, startTime }) {
 
   const commands = {
     cpp: `sh -c "g++ -O2 Main.cpp -o out && ./out < input.txt"`,
-    java: `sh -c "javac Main.java && java Main < input.txt"`,
+    java: `sh -c "javac -J-XX:TieredStopAtLevel=1 -J-Xmx128m Main.java && java -XX:TieredStopAtLevel=1 -Xmx128m -Djava.security.egd=file:/dev/./urandom Main < input.txt"`,
     python: `sh -c "python3 Main.py < input.txt"`
   };
 
@@ -116,6 +116,7 @@ async function runInProcessSandbox({ code, input, lang, tempDir, startTime }) {
   const sanitizedEnv = {
     PATH: process.env.PATH,
     SYSTEMROOT: process.env.SYSTEMROOT,
+    HOME: tempDir,
     TEMP: tempDir,
     TMP: tempDir
   };
@@ -158,8 +159,8 @@ async function runInProcessSandbox({ code, input, lang, tempDir, startTime }) {
     fs.writeFileSync(inputPath, input || '');
 
     const runCmd = isWindows
-      ? `cd /d "${tempDir}" && javac Main.java && java Main < input.txt`
-      : `cd "${tempDir}" && javac Main.java && java Main < input.txt`;
+      ? `cd /d "${tempDir}" && javac -J-XX:TieredStopAtLevel=1 -J-Xmx128m Main.java && java -XX:TieredStopAtLevel=1 -Xmx128m Main < input.txt`
+      : `cd "${tempDir}" && javac -J-XX:TieredStopAtLevel=1 -J-Xmx128m Main.java && java -XX:TieredStopAtLevel=1 -Xmx128m -Djava.security.egd=file:/dev/./urandom Main < input.txt`;
 
     return executeCommand(runCmd, sanitizedEnv, startTime, tempDir);
   }
