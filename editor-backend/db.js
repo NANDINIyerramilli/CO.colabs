@@ -90,8 +90,12 @@ async function initDb() {
           language VARCHAR(32) NOT NULL,
           created_by VARCHAR(64) REFERENCES users(id) ON DELETE SET NULL,
           created_by_name VARCHAR(255),
+          label VARCHAR(255) DEFAULT '',
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
+
+        -- Migrations for existing databases
+        ALTER TABLE version_history ADD COLUMN IF NOT EXISTS label VARCHAR(255) DEFAULT '';
       `);
       console.log('[DB] PostgreSQL schema initialized.');
       return;
