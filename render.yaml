@@ -2,11 +2,10 @@ services:
   # Backend API & ShareDB WebSocket Server
   - type: web
     name: cocolabs-backend
-    env: node
+    env: docker
     plan: free
-    rootDir: editor-backend
-    buildCommand: npm install
-    startCommand: npm start
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     envVars:
       - key: NODE_ENV
         value: production
