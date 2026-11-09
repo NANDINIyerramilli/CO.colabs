@@ -107,7 +107,12 @@ class Editor extends Component {
   };
 
   setupShareDB = (id) => {
-    const rws = new ReconnectingWebSocket(websocketURL + '/bar');
+    const token = localStorage.getItem('cocolabs_token');
+    const queryParams = new URLSearchParams();
+    if (token) queryParams.set('token', token);
+    queryParams.set('projectId', id);
+
+    const rws = new ReconnectingWebSocket(`${websocketURL}/bar?${queryParams.toString()}`);
     const connection = new shareDB.Connection(rws);
     const doc = connection.get('examples', id);
 
@@ -209,10 +214,7 @@ class Editor extends Component {
       const stdout = data.stdout || '';
       const stderr = data.stderr || '';
 
-      if (this.state.binding && this.state.binding._inoutListener) {
-        this.state.binding._inoutListener(this.state.output, stdout, 'output');
-      }
-
+      // Keep execution output ephemeral in local state; do not commit stdout to ShareDB document
       this.setState({
         output: stdout,
         stderr: stderr,

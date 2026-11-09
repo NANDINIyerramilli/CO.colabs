@@ -8,6 +8,7 @@ const shareDB = require('sharedb');
 const WebSocketJSONStream = require('@teamwork/websocket-json-stream');
 
 const db = require('./db');
+const { verifyToken } = require('./Middleware/auth');
 const authRouter = require('./Routes/auth');
 const projectsRouter = require('./Routes/projects');
 const codeRunRouter = require('./Routes/codeRun');
@@ -16,6 +17,66 @@ const PORT = process.env.PORT || 5000;
 
 // ShareDB server instance with presence tracking
 const share = new shareDB({ presence: true });
+
+// ShareDB Middleware: Attach authenticated user identity to agent on connection
+share.use('connect', (context, next) => {
+  if (context.req) {
+    context.agent.user = context.req.user || null;
+    context.agent.projectId = context.req.projectId || null;
+  }
+  next();
+});
+
+// ShareDB Middleware: Authorize document reads
+share.use('readSnapshots', async (context, next) => {
+  // Allow internal server synchronization
+  if (context.agent.isServer) return next();
+  if (context.collection !== 'examples') return next(new Error('Invalid document collection.'));
+
+  try {
+    for (const snapshot of context.snapshots) {
+      const project = await db.getProjectById(snapshot.id);
+      if (!project) {
+        return next(new Error('Document not found or unauthorized.'));
+      }
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ShareDB Middleware: Authorize document mutations (submit)
+share.use('submit', async (context, next) => {
+  // Allow internal server synchronization
+  if (context.agent.isServer) return next();
+  if (context.collection !== 'examples') return next(new Error('Invalid document collection.'));
+
+  const user = context.agent.user;
+  if (!user) {
+    return next(new Error('Unauthorized: Authentication required to edit documents.'));
+  }
+
+  try {
+    const projectId = context.id;
+    const project = await db.getProjectById(projectId);
+    if (!project) {
+      return next(new Error('Project not found.'));
+    }
+
+    const isOwner = project.owner_id === user.id;
+    const memberRole = await db.getMemberRole(projectId, user.id);
+    const canEdit = isOwner || memberRole === 'editor' || memberRole === 'owner';
+
+    if (!canEdit) {
+      return next(new Error('Unauthorized: Viewers have read-only permissions and cannot modify documents.'));
+    }
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 const app = express();
 app.use(cors());
@@ -28,16 +89,17 @@ app.use('/code', codeRunRouter);
 
 // WebSocket server for ShareDB real-time operational transformation
 const wss = new WebSocket.Server({ noServer: true });
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, request) => {
   const stream = new WebSocketJSONStream(ws);
   stream.on('error', (error) => {
     console.warn('[ShareDB Stream Error]:', error.message);
   });
-  share.listen(stream);
+  share.listen(stream, request);
 });
 
 // ShareDB connection for server-side persistence integration
 const connection = share.connect();
+connection.agent.isServer = true;
 
 // Document initialization & PostgreSQL synchronization endpoint
 app.post('/', async (req, res) => {
@@ -123,15 +185,33 @@ const server = app.listen(PORT, async () => {
   console.log(`[Cocolabs Backend] Server running on port ${PORT}`);
 });
 
-// Upgrade HTTP to WebSocket for ShareDB (/bar or /ws)
-server.on('upgrade', (request, socket, head) => {
-  const pathname = url.parse(request.url).pathname;
+// Upgrade HTTP to WebSocket for ShareDB (/bar or /ws) with JWT validation
+server.on('upgrade', async (request, socket, head) => {
+  const parsedUrl = url.parse(request.url, true);
+  const pathname = parsedUrl.pathname;
 
   if (pathname === '/bar' || pathname === '/ws') {
+    const token = parsedUrl.query.token;
+    let user = null;
+
+    if (token) {
+      user = await verifyToken(token);
+      if (!user) {
+        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+        socket.destroy();
+        return;
+      }
+    }
+
+    request.user = user;
+    request.projectId = parsedUrl.query.projectId || null;
+
     wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws);
+      wss.emit('connection', ws, request);
     });
   } else {
     socket.destroy();
   }
 });
+
+module.exports = { app, server, share };
