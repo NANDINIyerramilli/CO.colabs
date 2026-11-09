@@ -22,7 +22,7 @@ COcolabs is a modern, high-performance pair-programming and technical interviewi
   - starter boilerplates that update dynamically when switching languages.
 
 - **Sandboxed Code Execution**:
-  - Safe code running with hard resource constraints: 5000ms timeout, memory limit cap, CPU constraints, and isolated environment.
+  - Safe code running with resource constraints: 10000ms (10s) timeout, memory limit cap (256MB in Docker), CPU constraints, and isolated environment.
   - Ephemeral container runner with automatic fallback to isolated process sandboxing.
   - Guaranteed post-execution cleanup of all temporary source files and binaries.
 
@@ -35,7 +35,7 @@ COcolabs is a modern, high-performance pair-programming and technical interviewi
   - Ability to save, inline-rename, delete, and one-click restore code across active collaborators.
 
 - **Authentication & Role-Based Access Control (RBAC)**:
-  - Secure signup and login with salted `bcrypt` password hashing and stateless JWT tokens.
+  - Hybrid authentication: Supabase Authentication (cloud identity, email/password flow) with fallback to salted `bcrypt` password hashing and stateless JWT tokens for offline local development.
   - Granular permissions:
     - **Owner**: Full workspace management, member role assignments, and project settings.
     - **Editor**: Active editing, code execution, test data input, and version snapshotting.
@@ -56,8 +56,8 @@ COcolabs is a modern, high-performance pair-programming and technical interviewi
 | **Frontend** | React, Monaco Editor, ReconnectingWebSocket, CSS Modules |
 | **Backend** | Node.js, Express, ShareDB, WebSockets (`ws`) |
 | **Database** | PostgreSQL (`pg` pool) with automated schema migrations & local dev fallback |
-| **Security** | JSON Web Tokens (JWT), bcryptjs, CORS |
-| **Execution** | Ephemeral Docker containers / Isolated Process Sandbox |
+| **Security & Auth** | Supabase Auth, JSON Web Tokens (JWT), bcryptjs, CORS |
+| **Execution** | Ephemeral Docker containers (cgroups, `--network none`) / Isolated Process Sandbox |
 
 ---
 
@@ -69,8 +69,8 @@ COcolabs is a modern, high-performance pair-programming and technical interviewi
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/NANDINIyerramilli/CO.colabs.git
-cd CO.colabs
+git clone https://github.com/NANDINIyerramilli/cocolabs.git
+cd cocolabs
 ```
 
 ### 2. Backend Setup
@@ -80,13 +80,13 @@ cd editor-backend
 # Install dependencies
 npm install
 
-# (Optional) Set up environment variables
+# (Optional) Set up environment variables (DATABASE_URL, SUPABASE_URL, etc.)
 cp .env.example .env
 
 # Start backend server (runs on http://localhost:5000)
 npm start
 ```
-*Note: If `DATABASE_URL` is not provided, the backend automatically runs with an embedded zero-setup dev database storage.*
+*Note: If `DATABASE_URL` is not provided, the backend automatically runs with an embedded zero-setup dev database storage (`local_dev_db.json`). If Supabase credentials are not provided, it falls back to local bcrypt + JWT authentication.*
 
 ### 3. Frontend Setup
 In a new terminal window:
