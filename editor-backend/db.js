@@ -28,6 +28,16 @@ function loadFallbackData() {
       memoryStore.project_members = data.project_members || [];
       memoryStore.version_history = data.version_history || [];
     }
+    // Ensure system anonymous user exists for direct link guest rooms
+    if (!memoryStore.users.find(u => u.id === 'anonymous')) {
+      memoryStore.users.push({
+        id: 'anonymous',
+        name: 'Anonymous User',
+        email: 'anonymous@cocolabs.local',
+        password_hash: 'system_account',
+        created_at: new Date().toISOString()
+      });
+    }
   } catch (err) {
     console.warn('[DB] Could not load local dev fallback file, using clean state:', err.message);
   }
@@ -96,6 +106,11 @@ async function initDb() {
 
         -- Migrations for existing databases
         ALTER TABLE version_history ADD COLUMN IF NOT EXISTS label VARCHAR(255) DEFAULT '';
+
+        -- Seed system anonymous user for direct link room creation
+        INSERT INTO users (id, name, email, password_hash)
+        VALUES ('anonymous', 'Anonymous User', 'anonymous@cocolabs.local', 'system_account')
+        ON CONFLICT (id) DO NOTHING;
       `);
       console.log('[DB] PostgreSQL schema initialized.');
       return;
@@ -192,6 +207,7 @@ async function createProject({ id, title, ownerId, language, initialCode }) {
   const now = new Date().toISOString();
   const lang = language || 'cpp';
   const code = initialCode !== undefined ? initialCode : getDefaultCode(lang);
+  const safeOwnerId = (ownerId && ownerId.trim()) ? ownerId.trim() : 'anonymous';
 
   if (!useMemoryFallback && pool) {
     const client = await pool.connect();
@@ -200,20 +216,20 @@ async function createProject({ id, title, ownerId, language, initialCode }) {
       const res = await client.query(
         `INSERT INTO projects (id, title, owner_id, language, current_code, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-        [projectId, title || 'Untitled Project', ownerId, lang, code, now, now]
+        [projectId, title || 'Untitled Project', safeOwnerId, lang, code, now, now]
       );
       // Automatically add owner to members with role 'owner'
       await client.query(
         `INSERT INTO project_members (project_id, user_id, role, joined_at)
          VALUES ($1, $2, 'owner', $3) ON CONFLICT DO NOTHING`,
-        [projectId, ownerId, now]
+        [projectId, safeOwnerId, now]
       );
       // Save initial v1 version snapshot
       const versionId = crypto.randomUUID();
       await client.query(
         `INSERT INTO version_history (id, project_id, version_number, code, language, created_by, created_by_name, label, created_at)
          VALUES ($1, $2, 1, $3, $4, $5, 'Initial Setup', 'Initial Version', $6)`,
-        [versionId, projectId, code, lang, ownerId, now]
+        [versionId, projectId, code, lang, safeOwnerId, now]
       );
       await client.query('COMMIT');
       return res.rows[0];
@@ -229,21 +245,21 @@ async function createProject({ id, title, ownerId, language, initialCode }) {
   const project = {
     id: projectId,
     title: title || 'Untitled Project',
-    owner_id: ownerId,
+    owner_id: safeOwnerId,
     language: lang,
     current_code: code,
     created_at: now,
     updated_at: now
   };
   memoryStore.projects.push(project);
-  memoryStore.project_members.push({ project_id: projectId, user_id: ownerId, role: 'owner', joined_at: now });
+  memoryStore.project_members.push({ project_id: projectId, user_id: safeOwnerId, role: 'owner', joined_at: now });
   memoryStore.version_history.push({
     id: crypto.randomUUID(),
     project_id: projectId,
     version_number: 1,
     code,
     language: lang,
-    created_by: ownerId,
+    created_by: safeOwnerId,
     created_by_name: 'Initial Setup',
     label: 'Initial Version',
     created_at: now
@@ -299,7 +315,7 @@ async function listProjectsForUser(userId) {
   return result.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
 }
 
-async function updateProject(id, { title, language, currentCode }) {
+async function updateProject(id, { title, language, currentCode, owner_id }) {
   const now = new Date().toISOString();
   if (!useMemoryFallback && pool) {
     const res = await pool.query(
@@ -307,9 +323,10 @@ async function updateProject(id, { title, language, currentCode }) {
        SET title = COALESCE($1, title),
            language = COALESCE($2, language),
            current_code = COALESCE($3, current_code),
-           updated_at = $4
-       WHERE id = $5 RETURNING *`,
-      [title, language, currentCode, now, id]
+           owner_id = COALESCE($4, owner_id),
+           updated_at = $5
+       WHERE id = $6 RETURNING *`,
+      [title, language, currentCode, owner_id, now, id]
     );
     return res.rows[0];
   }
@@ -319,6 +336,7 @@ async function updateProject(id, { title, language, currentCode }) {
   if (title !== undefined) p.title = title;
   if (language !== undefined) p.language = language;
   if (currentCode !== undefined) p.current_code = currentCode;
+  if (owner_id !== undefined) p.owner_id = owner_id;
   p.updated_at = now;
   persistFallbackData();
   return p;

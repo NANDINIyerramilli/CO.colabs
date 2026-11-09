@@ -53,6 +53,12 @@ router.get('/:id', optionalAuth, async (req, res) => {
     if (req.user) {
       if (project.owner_id === req.user.id) {
         role = 'owner';
+      } else if (project.owner_id === 'anonymous') {
+        // Authenticated user claims ownership of direct-link anonymous room
+        await db.updateProject(cleanId, { owner_id: req.user.id });
+        await db.addMember(cleanId, req.user.id, 'owner');
+        project.owner_id = req.user.id;
+        role = 'owner';
       } else {
         const existingRole = await db.getMemberRole(id, req.user.id);
         if (existingRole) {
