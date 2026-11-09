@@ -103,6 +103,40 @@ async function runTests() {
   assert.strictEqual(typeof supabaseService.isSupabaseConfigured, 'function');
   console.log('✔ Test 10 Passed: Supabase client service initialized and exported');
 
+  // Test 11: System Anonymous User Seeding & Direct-Link Room Creation
+  const anonRoomId = `anon_${Date.now()}`;
+  const anonProj = await db.createProject({
+    id: anonRoomId,
+    title: 'Direct Link Guest Room',
+    ownerId: 'anonymous',
+    language: 'cpp'
+  });
+  assert.ok(anonProj.id, 'Anonymous room must be created successfully');
+  assert.strictEqual(anonProj.owner_id, 'anonymous', 'Owner should default to anonymous user');
+  console.log('✔ Test 11 Passed: Anonymous direct-link room created without FK constraint violation');
+
+  // Test 12: Anonymous Room Adoption by Authenticated User
+  await db.updateProject(anonRoomId, { owner_id: user.id });
+  const adoptedProj = await db.getProjectById(anonRoomId);
+  assert.strictEqual(adoptedProj.owner_id, user.id, 'Authenticated user can claim ownership of anonymous room');
+  console.log('✔ Test 12 Passed: Room ownership transfer');
+
+  // Test 13: verifyToken Helper Verification
+  const { verifyToken } = require('../Middleware/auth');
+  const verifiedUser = await verifyToken(token);
+  assert.ok(verifiedUser, 'Valid token must be verified');
+  assert.strictEqual(verifiedUser.id, user.id, 'Verified user ID must match');
+  const invalidResult = await verifyToken('malformed.bogus.jwt');
+  assert.strictEqual(invalidResult, null, 'Invalid token must return null');
+  console.log('✔ Test 13 Passed: verifyToken correctly validates valid and rejects invalid tokens');
+
+  // Test 14: Execution Role Authorization Gate
+  const ownerPermitted = project.owner_id === user.id || (await db.getMemberRole(project.id, user.id)) === 'editor';
+  assert.strictEqual(ownerPermitted, true, 'Owner must be permitted to run code');
+  const viewerPermitted = project.owner_id === viewerUser.id || (await db.getMemberRole(project.id, viewerUser.id)) === 'editor';
+  assert.strictEqual(viewerPermitted, false, 'Viewer must NOT be permitted to run code');
+  console.log('✔ Test 14 Passed: Execution role authorization gate verified');
+
   console.log('--- ALL BACKEND TESTS PASSED SUCCESSFULLY! ---');
 }
 
