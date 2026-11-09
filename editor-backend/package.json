@@ -4,7 +4,7 @@
   "description": "Backend for collaborative editor",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/api.test.js",
+    "test": "node tests/api.test.js && node tests/security.test.js",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
